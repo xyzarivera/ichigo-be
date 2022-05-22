@@ -19,8 +19,14 @@ const setupServer = () => {
 
   app.get("/users/:id/rewards", (req, res) => {
     const { id } = req.params;
+    let input = req.query.at;
+
+    if (input === undefined) {
+      input = new Date();
+    }
+
     // set input in Date object
-    const inputDate = new Date(req.query.at);
+    const inputDate = new Date(input);
 
     // invalid date input
     if (!(inputDate instanceof Date && !isNaN(inputDate))) {
@@ -48,6 +54,8 @@ const setupServer = () => {
     res.status(201);
     res.json(response);
   });
+
+  app.patch("/users/:id/rewards/:availableAt/reddem", (req, res) => {});
 
   return app;
 };
