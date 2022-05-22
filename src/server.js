@@ -47,7 +47,7 @@ const setupServer = () => {
     }
 
     // create entry to user object
-    user[id] = data;
+    user[id] = { data };
 
     // Status 200 = entry is created
     const response = user[id];
