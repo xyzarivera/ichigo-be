@@ -1,4 +1,5 @@
 const express = require("express");
+const utils = require("./utils/utils");
 
 const setupServer = () => {
   const app = express();
@@ -27,23 +28,7 @@ const setupServer = () => {
       res.json({ message: "Invalid date query" });
     }
 
-    const inputDay = inputDate.getUTCDay();
-
-    // get sunday
-    const newDay = new Date(req.query.at);
-    newDay.setDate(newDay.getUTCDate() - inputDay);
-    newDay.setUTCHours(0);
-
-    // complete week
-    const week = [new Date(newDay)];
-    while (
-      newDay.setUTCDate(newDay.getUTCDate() + 1) &&
-      newDay.getUTCDay() !== 0
-    ) {
-      week.push(new Date(newDay));
-    }
-    // push next sunday
-    week.push(new Date(newDay));
+    const week = utils.createWeek(inputDate);
 
     // construct return object
     const data = [];
