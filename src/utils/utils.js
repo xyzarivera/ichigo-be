@@ -3,22 +3,23 @@ function createWeek(inputDate) {
 
   // get sunday
   const newDay = new Date(inputDate);
-  newDay.setDate(newDay.getUTCDate() - inputDay);
+  console.log("date", newDay.getUTCDate());
+  console.log("day", inputDay);
+  if (inputDay !== 0) {
+    newDay.setDate(newDay.getUTCDate() - inputDay);
+  }
   newDay.setUTCHours(0);
   newDay.setUTCMinutes(0);
   newDay.setUTCSeconds(0);
   newDay.setUTCMilliseconds(0);
+  console.log("newDay", newDay);
 
   // complete week
   const week = [new Date(newDay)];
-  while (
-    newDay.setUTCDate(newDay.getUTCDate() + 1) &&
-    newDay.getUTCDay() !== 0
-  ) {
+  for (let i = 0; i < 8; i++) {
+    newDay.setUTCDate(newDay.getUTCDate() + 1);
     week.push(new Date(newDay));
   }
-  // push next sunday
-  week.push(new Date(newDay));
 
   return week;
 }
