@@ -55,7 +55,31 @@ const setupServer = () => {
     res.json(response);
   });
 
-  app.patch("/users/:id/rewards/:availableAt/reddem", (req, res) => {});
+  app.patch("/users/:id/rewards/:rewardId/redeem", (req, res) => {
+    const { id, rewardId } = req.params;
+    const currentDate = new Date();
+
+    // check if user exists
+    if (user[id] === undefined) {
+      res.status(404);
+      res.json({ message: "User does not exist" });
+    }
+
+    const { data } = user[id];
+
+    // check if reward ID exists
+    const rewardIdIndex = data.findIndex((obj) => obj.availableAt === rewardId);
+
+    if (rewardIdIndex === -1) {
+      res.status(404);
+      res.json({ message: "Reward ID does not exist" });
+    }
+
+    const isRewardExpired = currentDate > data[rewardIdIndex].expiresAt;
+    console.log(isRewardExpired);
+
+    // data[rewardIdIndex].redeemedAt = new Date();
+  });
 
   return app;
 };
