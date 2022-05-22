@@ -5,6 +5,9 @@ function createWeek(inputDate) {
   const newDay = new Date(inputDate);
   newDay.setDate(newDay.getUTCDate() - inputDay);
   newDay.setUTCHours(0);
+  newDay.setUTCMinutes(0);
+  newDay.setUTCSeconds(0);
+  newDay.setUTCMilliseconds(0);
 
   // complete week
   const week = [new Date(newDay)];
