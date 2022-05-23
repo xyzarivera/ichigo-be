@@ -125,7 +125,6 @@ const setupServer = () => {
       } else {
         const isRewardExpired =
           currentDate > new Date(data[rewardIdIndex].expiresAt);
-        console.log({ isRewardExpired });
 
         if (isRewardExpired) {
           // scenario 3
