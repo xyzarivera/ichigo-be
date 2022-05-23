@@ -92,39 +92,66 @@ const setupServer = () => {
   app.patch("/users/:id/rewards/:rewardId/redeem", (req, res) => {
     const { id, rewardId } = req.params;
     const currentDate = new Date();
+    let status;
+    let response;
+
+    /**
+     * Redeem scenarios
+     * 1. If user does not exists, return error
+     * 2. if reward id does not exists, return error
+     * 3. if reward id is expired, return error
+     * 4. if reward id is valid and redeemedAt is null, update redeemedAt with current Time
+     * 5. if reward id is valied and redeemedAt value is not null, return error
+     */
 
     // check if user exists
     if (user[id] === undefined) {
-      res.status(404);
-      res.json({ error: { message: "User does not exist" } });
+      // scenario 1
+      status = 404;
+      response = { error: { message: "User does not exist" } };
+    } else {
+      // retrieve reward data
+      const { data } = user[id];
+
+      // check if reward ID exists
+      const rewardIdIndex = data.findIndex(
+        (obj) => obj.availableAt === rewardId
+      );
+
+      if (rewardIdIndex === -1) {
+        // scenario 2
+        status = 404;
+        response = { error: { message: "Reward ID does not exist" } };
+      } else {
+        const isRewardExpired =
+          currentDate > new Date(data[rewardIdIndex].expiresAt);
+        console.log({ isRewardExpired });
+
+        if (isRewardExpired) {
+          // scenario 3
+          status = 400;
+          response = { error: { message: "This reward is already expired" } };
+        } else if (
+          // scenario 4
+          !isRewardExpired &&
+          data[rewardIdIndex].redeemedAt === null
+        ) {
+          data[rewardIdIndex].redeemedAt = new Date();
+          status = 200;
+          response = { data: data[rewardIdIndex] };
+        } else if (
+          // scenario 5
+          !isRewardExpired &&
+          data[rewardIdIndex].redeemedAt !== null
+        ) {
+          status = 400;
+          response = { error: { message: "This reward is redeemed" } };
+        }
+      }
     }
 
-    // retrieve reward data
-    const { data } = user[id];
-
-    // check if reward ID exists
-    const rewardIdIndex = data.findIndex((obj) => obj.availableAt === rewardId);
-
-    if (rewardIdIndex === -1) {
-      res.status(404);
-      res.json({ error: { message: "Reward ID does not exist" } });
-    }
-
-    console.log({ rewardIdIndex });
-
-    const isRewardExpired =
-      currentDate > new Date(data[rewardIdIndex].expiresAt);
-    console.log({ isRewardExpired });
-
-    if (isRewardExpired) {
-      res.status(400);
-      res.json({ error: { message: "This reward is already expired" } });
-    }
-
-    data[rewardIdIndex].redeemedAt = new Date();
-
-    res.status(200);
-    res.json({ data: data[rewardIdIndex] });
+    res.status(status);
+    res.json(response);
   });
 
   return app;
