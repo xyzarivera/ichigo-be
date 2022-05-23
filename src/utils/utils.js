@@ -15,10 +15,10 @@ function createWeek(inputDate) {
   console.log("newDay", newDay);
 
   // complete week
-  const week = [new Date(newDay)];
+  const week = [new Date(newDay).toISOString()];
   for (let i = 0; i < 8; i++) {
     newDay.setUTCDate(newDay.getUTCDate() + 1);
-    week.push(new Date(newDay));
+    week.push(new Date(newDay).toISOString());
   }
 
   return week;
