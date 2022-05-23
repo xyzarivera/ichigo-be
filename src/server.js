@@ -9,20 +9,28 @@ const setupServer = () => {
   /* In-memory Data */
   const user = {};
 
-  /* Application Logic */
-
-  /* endpoint 1: generate and fetch rewards
-  1. set inputDate into Date object and identify inputDay
-  2. complete weekArray starting Sunday and ending Saturday given input day
-      a. if inputDay is not 0 (Sunday), get Sunday
-      b. complete week given known Sunday
-   */
-
   app.get("/users/:id/rewards", (req, res) => {
     const { id } = req.params;
     let input = req.query.at;
     let status;
     let response;
+
+    /**
+     * *secret* behavior: if no date parameter is passed,
+     * it will automatically generate rewards data of the current week
+     *
+     * 1. set inputDate into Date object and identify inputDay
+     * 2. complete weekArray starting Sunday and ending Saturday given input day
+     *     a. if inputDay is not 0 (Sunday), get Sunday
+     *     b. complete week given known Sunday
+     * 3. create rewards data based on given scenarios:
+     *     a. if user does not exist, create user and rewards data
+     *     b. if user exists and query data exists, get old data only
+     *     c. if user exists and query data does not exists, append query data
+     *
+     * checking of existing data vs new data:
+     * - comparing if sunday of the queried week exists in the current data
+     */
 
     if (input === undefined) {
       input = new Date();
@@ -39,7 +47,7 @@ const setupServer = () => {
 
     const week = utils.createWeek(inputDate);
 
-    // construct return object
+    // construct new rewards of the week
     const newData = [];
     for (let i = 0; i < 7; i++) {
       newData.push({
@@ -49,20 +57,10 @@ const setupServer = () => {
       });
     }
 
-    /**
-     * data management
-     * 1. if user does not exist, create user and rewards data
-     * 2. if user exists and query data exists, get old data only
-     * 3. if user exists and query data does not exists, append query data
-     *
-     * checking query data:
-     * - comparing if sunday of the queried week exists in the current data
-     */
-
     const existingData = user[id];
 
     if (_.isEmpty(existingData)) {
-      // scenario 1
+      // scenario a
       user[id] = { data: newData };
 
       status = 201;
@@ -73,13 +71,13 @@ const setupServer = () => {
       });
 
       if (sundayIndex === -1) {
-        // scenario 3
+        // scenario c
         user[id].data.push(...newData);
 
         status = 200;
         response = user[id];
       } else {
-        // scenario 2
+        // scenario b
         status = 200;
         response = user[id];
       }
