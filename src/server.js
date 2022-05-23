@@ -1,4 +1,5 @@
 const express = require("express");
+const _ = require("lodash");
 const utils = require("./utils/utils");
 
 const setupServer = () => {
@@ -20,6 +21,8 @@ const setupServer = () => {
   app.get("/users/:id/rewards", (req, res) => {
     const { id } = req.params;
     let input = req.query.at;
+    let status;
+    let response;
 
     if (input === undefined) {
       input = new Date();
@@ -37,21 +40,52 @@ const setupServer = () => {
     const week = utils.createWeek(inputDate);
 
     // construct return object
-    const data = [];
+    const newData = [];
     for (let i = 0; i < 7; i++) {
-      data.push({
+      newData.push({
         availableAt: week[i],
         redeemedAt: null,
         expiresAt: week[i + 1],
       });
     }
 
-    // create entry to user object
-    user[id] = { data };
+    /**
+     * data management
+     * 1. if user does not exist, create user and rewards data
+     * 2. if user exists and query data exists, get old data only
+     * 3. if user exists and query data does not exists, append query data
+     *
+     * checking query data:
+     * - comparing if sunday of the queried week exists in the current data
+     */
 
-    // Status 200 = entry is created
-    const response = user[id];
-    res.status(201);
+    const existingData = user[id];
+
+    if (_.isEmpty(existingData)) {
+      // scenario 1
+      user[id] = { data: newData };
+
+      status = 201;
+      response = user[id];
+    } else {
+      const sundayIndex = _.findIndex(existingData.data, {
+        availableAt: newData[0].availableAt,
+      });
+
+      if (sundayIndex === -1) {
+        // scenario 3
+        user[id].data.push(...newData);
+
+        status = 200;
+        response = user[id];
+      } else {
+        // scenario 2
+        status = 200;
+        response = user[id];
+      }
+    }
+
+    res.status(status);
     res.json(response);
   });
 
@@ -78,8 +112,9 @@ const setupServer = () => {
 
     console.log({ rewardIdIndex });
 
-    const isRewardExpired = currentDate > data[rewardIdIndex].expiresAt;
-    console.log(isRewardExpired);
+    const isRewardExpired =
+      currentDate > new Date(data[rewardIdIndex].expiresAt);
+    console.log({ isRewardExpired });
 
     if (isRewardExpired) {
       res.status(400);
