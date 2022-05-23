@@ -31,7 +31,7 @@ const setupServer = () => {
     // invalid date input
     if (!(inputDate instanceof Date && !isNaN(inputDate))) {
       res.status(400);
-      res.json({ message: "Invalid date query" });
+      res.json({ error: { message: "Invalid date query" } });
     }
 
     const week = utils.createWeek(inputDate);
@@ -62,9 +62,10 @@ const setupServer = () => {
     // check if user exists
     if (user[id] === undefined) {
       res.status(404);
-      res.json({ message: "User does not exist" });
+      res.json({ error: { message: "User does not exist" } });
     }
 
+    // retrieve reward data
     const { data } = user[id];
 
     // check if reward ID exists
@@ -72,13 +73,23 @@ const setupServer = () => {
 
     if (rewardIdIndex === -1) {
       res.status(404);
-      res.json({ message: "Reward ID does not exist" });
+      res.json({ error: { message: "Reward ID does not exist" } });
     }
+
+    console.log({ rewardIdIndex });
 
     const isRewardExpired = currentDate > data[rewardIdIndex].expiresAt;
     console.log(isRewardExpired);
 
-    // data[rewardIdIndex].redeemedAt = new Date();
+    if (isRewardExpired) {
+      res.status(400);
+      res.json({ error: { message: "This reward is already expired" } });
+    }
+
+    data[rewardIdIndex].redeemedAt = new Date();
+
+    res.status(200);
+    res.json({ data: data[rewardIdIndex] });
   });
 
   return app;
