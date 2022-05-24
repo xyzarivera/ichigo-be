@@ -8,14 +8,13 @@ function createWeek(inputDate) {
   }
   newDay.setUTCHours(0);
   newDay.setUTCMinutes(0);
-  newDay.setUTCSeconds(0);
-  newDay.setUTCMilliseconds(0);
+  newDay.setUTCSeconds(0, 0);
 
   // complete week
-  const week = [new Date(newDay).toISOString()];
+  const week = [`${new Date(newDay).toISOString().split(".")[0]}Z`];
   for (let i = 0; i < 8; i++) {
     newDay.setUTCDate(newDay.getUTCDate() + 1);
-    week.push(new Date(newDay).toISOString());
+    week.push(`${new Date(newDay).toISOString().split(".")[0]}Z`);
   }
 
   return week;
