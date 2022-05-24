@@ -1,0 +1,38 @@
+{
+  "name": "ichigo-be",
+  "version": "1.0.0",
+  "description": "Backend challenge from Ichigo",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ./src/index.js",
+    "dev": "npx nodemon src/index.js",
+    "test": "mocha test --exit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xyzarivera/ichigo-be.git"
+  },
+  "keywords": [
+    "ichigo"
+  ],
+  "author": "Xyza Rivera",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/xyzarivera/ichigo-be/issues"
+  },
+  "homepage": "https://github.com/xyzarivera/ichigo-be#readme",
+  "dependencies": {
+    "chai-http": "^4.3.0",
+    "express": "^4.18.1",
+    "lodash": "^4.17.21"
+  },
+  "devDependencies": {
+    "chai": "^4.3.6",
+    "eslint": "^8.16.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-config-problems": "^6.0.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "mocha": "^10.0.0",
+    "prettier": "^2.6.2"
+  }
+}
