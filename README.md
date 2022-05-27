@@ -10,7 +10,7 @@
    git clone git@github.com:xyzarivera/ichigo-be.git
    ```
 
-2. Create a Node project using `npm` and followed through the wizard to create the `package.json` file
+2. Created a Node project using `npm` and followed through the wizard to create the `package.json` file
 
    ```
    npm init
@@ -20,6 +20,18 @@
 
    ```
    npm install express
+   ```
+
+4. Installed linters and created `.eslintrc.js` for eslint rules
+
+   ```
+   npm i -D eslint prettier eslint-plugin-prettier eslint-config-prettier eslint-config-problems
+   ```
+
+5. Installed `chai`, `chai-http` and `mocha` for tests
+
+   ```
+   npm i -D chai mocha chai-http
    ```
 
 ## Thought Process
@@ -62,3 +74,5 @@ checking of existing data vs new data:
 5. if reward id is valied and redeemedAt value is not null, return error
 
 ## Demo
+
+[Demo API endpoint](https://ichigo-be-test.herokuapp.com/)
