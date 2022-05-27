@@ -62,3 +62,5 @@ checking of existing data vs new data:
 5. if reward id is valied and redeemedAt value is not null, return error
 
 ## Demo
+
+[Demo API endpoint](https://ichigo-be-test.herokuapp.com/)
